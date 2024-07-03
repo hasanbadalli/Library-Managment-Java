@@ -7,7 +7,9 @@ import enums.UserRole;
 import exceptions.CustomAuthException;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Main {
     static Scanner scan = new Scanner(System.in);
@@ -150,8 +152,10 @@ public class Main {
                     4 --> See Borrowed Books
                     5 --> Return Book
                     6 --> See your Transactions History
-                    8 --> Update password
-                    9 --> Delete Account
+                    7 --> Search Book by Name
+                    8 --> Filter By Genre
+                    9 --> Update password
+                    10 --> Delete Account
                     0 --> Exit
                     """);
             int option = scan.nextInt();
@@ -202,7 +206,38 @@ public class Main {
                     Transaction transaction = new Transaction();
                     transaction.displayForUser(userMember);
                 }
+                case 7 -> {
+                    System.out.println("Write Book name for searching(when you write 'is' , Ism, Ismayilli,Ismayilli City etc. will show");
+                    String bookName = scan.next();
+                    boolean isBookFindded = false;
+                    for (Book book : Book.books) {
+                        if(book.getTitle().toLowerCase().contains(bookName.toLowerCase())){
+                            System.out.println(book);
+                            isBookFindded = true;
+                        }
+                    }
+                    if(!isBookFindded){
+                        System.out.println("There is no book like this name");
+                    }
+                }
                 case 8 -> {
+                    System.out.println("Write genre for sorting");
+                    System.out.println("Genres: Fiction, Nonfiction, Science, Art, Dram, Dedective");
+                    try{
+                        BookGenre bookGenre = BookGenre.valueOf(scan.next().toUpperCase());
+                        List<Book> sortedBook = Book.books.stream().filter(book -> book.getGenre() == bookGenre).toList();
+                        for (Book book : sortedBook) {
+                            System.out.println(book);
+                        }
+                        if (sortedBook.isEmpty()){
+                            System.out.println("There is no book for this genre");
+                        }
+                    }catch (IllegalArgumentException e){
+                        System.out.println("Please write genre correctly");
+                    }
+
+                }
+                case 9 -> {
                     System.out.println("Write your new password");
                     String newPassword = scan.next();
                     if(!newPassword.isEmpty()){
@@ -211,7 +246,7 @@ public class Main {
                         System.out.println("Password cannot be empty");
                     }
                 }
-                case 9 -> {
+                case 10 -> {
                     userMember.deleteUser(userMember);
                     run = false;
                     System.out.println("Your account deleted successfully");
