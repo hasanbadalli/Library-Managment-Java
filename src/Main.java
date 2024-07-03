@@ -1,6 +1,7 @@
 import concrets.Book;
 import concrets.Transaction;
 import concrets.User;
+import enums.BookGenre;
 import enums.TransactionType;
 import enums.UserRole;
 import exceptions.CustomAuthException;
@@ -167,7 +168,7 @@ public class Main {
                     System.out.println();
                     System.out.println("Please write book id which you want");
                     int id = scan.nextInt();
-                    Book book1 = Book.findUserBookById(id);
+                    Book book1 = Book.findBookById(id);
                     if(book1 != null){
                         if(book1.isAvailable()){
                             userMember.borrowBook(book1);
@@ -238,6 +239,10 @@ public class Main {
             System.out.println("""
                     Select one of them
                     1 --> See All Users
+                    2 --> See All Users Transactions
+                    3 --> Add Book
+                    4 --> Delete Book
+                    5 --> Update Book
                     8 --> Update password
                     9 --> Delete Account
                     0 --> Exit
@@ -249,9 +254,66 @@ public class Main {
                             userMap.toString());
                 }
                 case 2 -> {
-
+                    Transaction transaction = new Transaction();
+                    transaction.display();
                 }
 
+                case 3 -> {
+                    System.out.println("Write Book Title");
+                    String title = scan.next();
+                    System.out.println("Write Author Name");
+                    String author = scan.next();
+                    System.out.println("Write Book Genre");
+                    BookGenre bookGenre = BookGenre.valueOf(scan.next().toUpperCase());
+                    System.out.println("Avialable or no avialable?(Wrire true or false)");
+                    boolean isavialable = scan.nextBoolean();
+                    Book book = new Book(title, author, bookGenre, LocalDate.now(), isavialable);
+                    book.addBook(book);
+                    System.out.println("Book is added successfully");
+                }
+                case 4 -> {
+                    Book book = new Book();
+                    book.seeAllBooks();
+                    System.out.println("Write book id which you want remove");
+                    int id = scan.nextInt();
+                    Book book1= Book.findBookById(id);
+                    if(book1 != null){
+                        book.deleteBook(book1);
+                        System.out.println("Book is removed successfully");
+                    }else{
+                        System.out.println("There is no book for this id");
+                    }
+                }
+                case 5 -> {
+                    Book book = new Book();
+                    book.seeAllBooks();
+                    System.out.println("Write Book id which you want update avialable status");
+                    int id = scan.nextInt();
+                    Book book1= Book.findBookById(id);
+                    if(book1 != null){
+                        book1.updateBook(book1);
+                        System.out.println("Book status is updated successfully");
+                    }else{
+                        System.out.println("There is no book for this id");
+                    }
+                }case 6 -> {
+                    Book book = new Book();
+                    book.seeAllBooks();
+                }
+                case 8 -> {
+                    System.out.println("Write your new password");
+                    String newPassword = scan.next();
+                    if(!newPassword.isEmpty()){
+                        targetUser.updateUser(targetUser, newPassword);
+                    }else {
+                        System.out.println("Password cannot be empty");
+                    }
+                }
+                case 9 -> {
+                    targetUser.deleteUser(targetUser);
+                    run = false;
+                    System.out.println("Your account deleted successfully");
+                }
                 case 0 -> {
                     run = false;
                     System.out.println("Exited");

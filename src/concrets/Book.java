@@ -11,7 +11,7 @@ import java.util.List;
 
 public class Book implements IBook {
     private int bookID;
-    private static int nextID = 5;
+    private static int nextID = 1;
     private String title, author;
     private BookGenre genre;
     private LocalDate publicationDate;
@@ -129,18 +129,18 @@ public class Book implements IBook {
 
 
     @Override
-    public void addBook() {
-
+    public void addBook(Book book) {
+        books.add(book);
     }
 
     @Override
-    public void deleteBook() {
-
+    public void deleteBook(Book book) {
+        books.remove(book);
     }
 
     @Override
-    public void updateBook() {
-
+    public void updateBook(Book book) {
+        book.setAvailable(!isAvailable);
     }
 
     @Override
