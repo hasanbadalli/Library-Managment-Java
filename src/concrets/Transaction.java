@@ -16,7 +16,12 @@ public class Transaction implements ITransaction {
     private LocalDate borrowDate;
     private LocalDate returnDate;
     private TransactionType transactionType;
-    public Transaction(int userID, int bookID, TransactionType transactionType,LocalDate borrowDate) {
+
+    public LocalDate getBorrowDate() {
+        return borrowDate;
+    }
+
+    public Transaction(int userID, int bookID, TransactionType transactionType, LocalDate borrowDate) {
         this.transactionID = nextID++;
         this.userID = userID;
         this.bookID = bookID;
@@ -24,11 +29,12 @@ public class Transaction implements ITransaction {
         this.borrowDate = borrowDate;
     }
 
-    public Transaction(int userID, int bookID, LocalDate returnDate ,TransactionType transactionType) {
+    public Transaction(int userID, int bookID, TransactionType transactionType, LocalDate borrowDate, LocalDate returnDate) {
         this.transactionID = nextID++;
         this.userID = userID;
         this.bookID = bookID;
         this.transactionType = transactionType;
+        this.borrowDate = borrowDate;
         this.returnDate = returnDate;
     }
 
@@ -39,6 +45,17 @@ public class Transaction implements ITransaction {
 
     private static HashMap<User, ArrayList<Transaction>> userTransactions = new HashMap<>();
 
+    public static LocalDate getBorrowDate(User user, int bookID) {
+        ArrayList<Transaction> transactions = userTransactions.get(user);
+        if (transactions != null) {
+            for (Transaction transaction : transactions) {
+                if (transaction.bookID == bookID) {
+                    return transaction.getBorrowDate();
+                }
+            }
+        }
+        return null;
+    }
 
     @Override
     public void record(User user,Transaction transaction) {

@@ -195,7 +195,8 @@ public class Main {
                     Book book = Book.findUserBookById(id);
                     if(book != null){
                         userMember.returnBook(book);
-                        Transaction transaction = new Transaction(userMember.getUserID(), id, LocalDate.now(), TransactionType.RETURN);
+                        LocalDate borrowDate = Transaction.getBorrowDate(userMember, book.getBookID());
+                        Transaction transaction = new Transaction(userMember.getUserID(), id, TransactionType.RETURN, borrowDate, LocalDate.now());
                         transaction.record(userMember, transaction);
                     }else{
                         System.out.println("There is no book for this id");
@@ -278,6 +279,7 @@ public class Main {
                     3 --> Add Book
                     4 --> Delete Book
                     5 --> Update Book
+                    6 --> See All Book
                     8 --> Update password
                     9 --> Delete Account
                     0 --> Exit
