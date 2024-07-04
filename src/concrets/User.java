@@ -10,11 +10,26 @@ public class User implements IUser {
     private static int nextID=1;
     private String name, adress, phone, email, password;
     private UserRole userRole;
-
+    private int lateFee;
     public static Set<User> userMap = new HashSet<>();
+    private static List<Book> userBooks = new ArrayList<>();
+    private List<Book> timeExpiredBooks = new ArrayList<>();
 
+    public int getLateFee() {
+        return lateFee;
+    }
 
-    public static List<Book> userBooks = new ArrayList<>();
+    public void setLateFee(int lateFee) {
+        this.lateFee = lateFee;
+    }
+
+    public List<Book> getTimeExpiredBooks() {
+        return timeExpiredBooks;
+    }
+
+    public static List<Book> getUserBooks() {
+        return new ArrayList<>(userBooks);
+    }
 
     public User(String name, String adress, String phone, String email, String password, UserRole userRole) {
         this.userID = nextID++;
@@ -155,7 +170,8 @@ public class User implements IUser {
                 ", phone='" + phone + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", userRole=" + userRole +
+                ", userRole=" + userRole + '\'' +
+                ", lateFee=" + lateFee +
                 '}';
     }
 }

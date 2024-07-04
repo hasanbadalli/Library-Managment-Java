@@ -7,12 +7,16 @@ import enums.UserRole;
 import exceptions.CustomAuthException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class Main {
     static Scanner scan = new Scanner(System.in);
+
     public static void main(String[] args) {
 
         System.out.println("""
@@ -144,6 +148,7 @@ public class Main {
         boolean run = true;
         while (run){
 
+
             System.out.println("""
                     Select one of them
                     1 --> See account info
@@ -158,6 +163,7 @@ public class Main {
                     10 --> Delete Account
                     0 --> Exit
                     """);
+            borrowedBookChecker(userMember);
             int option = scan.nextInt();
             switch(option){
                 case 1 -> {
@@ -198,6 +204,7 @@ public class Main {
                         LocalDate borrowDate = Transaction.getBorrowDate(userMember, book.getBookID());
                         Transaction transaction = new Transaction(userMember.getUserID(), id, TransactionType.RETURN, borrowDate, LocalDate.now());
                         transaction.record(userMember, transaction);
+                        userMember.getTimeExpiredBooks().remove(book);
                     }else{
                         System.out.println("There is no book for this id");
                     }
@@ -316,6 +323,7 @@ public class Main {
                     Book book1= Book.findBookById(id);
                     if(book1 != null){
                         book.deleteBook(book1);
+
                         System.out.println("Book is removed successfully");
                     }else{
                         System.out.println("There is no book for this id");
@@ -360,6 +368,28 @@ public class Main {
         }
     }
 
+    static void borrowedBookChecker(User user){
+        ArrayList<Transaction> transactions = Transaction.getUserTransactions().get(user);
+
+        if (transactions != null) {
+            int lateFee = 0;
+            for (Transaction transaction : transactions) {
+                long daysBorrowed = ChronoUnit.DAYS.between(transaction.getBorrowDate(), LocalDate.now());
+                if (daysBorrowed > 14) {
+                    user.getTimeExpiredBooks().add(Book.findUserBookById(transaction.getBookID()));
+                    lateFee += 10;
+
+                }else if(daysBorrowed > 7){
+                    user.getTimeExpiredBooks().add(Book.findUserBookById(transaction.getBookID()));
+                    lateFee += 5;
+                }
+            }
+            if(lateFee != 0){
+                System.out.println("The book you borrowed has expired, you must return it. And you must pay " + lateFee);
+            }
+            user.setLateFee(lateFee);
+        }
+    }
 
 
 }

@@ -17,6 +17,10 @@ public class Transaction implements ITransaction {
     private LocalDate returnDate;
     private TransactionType transactionType;
 
+    public int getBookID() {
+        return bookID;
+    }
+
     public LocalDate getBorrowDate() {
         return borrowDate;
     }
@@ -44,6 +48,10 @@ public class Transaction implements ITransaction {
 
 
     private static HashMap<User, ArrayList<Transaction>> userTransactions = new HashMap<>();
+
+    public static HashMap<User, ArrayList<Transaction>> getUserTransactions() {
+        return new HashMap<>(userTransactions);
+    }
 
     public static LocalDate getBorrowDate(User user, int bookID) {
         ArrayList<Transaction> transactions = userTransactions.get(user);

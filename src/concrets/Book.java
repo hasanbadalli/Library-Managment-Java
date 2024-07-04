@@ -119,7 +119,7 @@ public class Book implements IBook {
     }
 
     public static Book findUserBookById(int id){
-        for(Book book : User.userBooks){
+        for(Book book : User.getUserBooks()){
             if(book.getBookID() == id){
                 return book;
             }
