@@ -159,8 +159,9 @@ public class Main {
                     6 --> See your Transactions History
                     7 --> Search Book by Name
                     8 --> Filter By Genre
-                    9 --> Update password
-                    10 --> Delete Account
+                    9 --> See favourite books
+                    10 --> Update password
+                    11 --> Delete Account
                     0 --> Exit
                     """);
             borrowedBookChecker(userMember);
@@ -172,6 +173,29 @@ public class Main {
                     Book book = new Book();
                     book.seeAllBooks();
                     System.out.println();
+                    System.out.println("If you want to add favourite books, write 1, if not write 0");
+                    int newOption = scan.nextInt();
+                    if(newOption == 1){
+                        System.out.println("Type the ID of the book to add it to your favorite book list (if you re-type the ID of the book you added, it will be deleted from your favorite list).");
+                        System.out.println(userMember.getFavouriteBooks());
+                        int newBookId = scan.nextInt();
+                        Book book1 = Book.findBookById(newBookId);
+                        if(book1 != null){
+                            boolean existed = false;
+                            for (Book favouriteBook : userMember.getFavouriteBooks()) {
+                                if(favouriteBook.getBookID() == newBookId){
+                                    userMember.getFavouriteBooks().remove(book1);
+                                    existed = true;
+                                    break;
+                                }
+                            }
+                            if (!existed){
+                                userMember.getFavouriteBooks().add(book1);
+                            }
+                        }else{
+                            System.out.println("There is no book for this id");
+                        }
+                    }
                 }case 3->{
                     Book book = new Book();
                     book.seeAllBooks();
@@ -198,7 +222,8 @@ public class Main {
                     userMember.seeBorrowedBooks();
                     System.out.println("Please write book id which you want to return");
                     int id = scan.nextInt();
-                    Book book = Book.findUserBookById(id);
+                    Book book1 = new Book();
+                    Book book = Book.findUserBookById(id, userMember);
                     if(book != null){
                         userMember.returnBook(book);
                         LocalDate borrowDate = Transaction.getBorrowDate(userMember, book.getBookID());
@@ -246,6 +271,10 @@ public class Main {
 
                 }
                 case 9 -> {
+                    System.out.println("Favourite Books: ");
+                    System.out.println(userMember.getFavouriteBooks());
+                }
+                case 10 -> {
                     System.out.println("Write your new password");
                     String newPassword = scan.next();
                     if(!newPassword.isEmpty()){
@@ -254,7 +283,7 @@ public class Main {
                         System.out.println("Password cannot be empty");
                     }
                 }
-                case 10 -> {
+                case 11 -> {
                     userMember.deleteUser(userMember);
                     run = false;
                     System.out.println("Your account deleted successfully");
@@ -376,11 +405,11 @@ public class Main {
             for (Transaction transaction : transactions) {
                 long daysBorrowed = ChronoUnit.DAYS.between(transaction.getBorrowDate(), LocalDate.now());
                 if (daysBorrowed > 14) {
-                    user.getTimeExpiredBooks().add(Book.findUserBookById(transaction.getBookID()));
+                    user.getTimeExpiredBooks().add(Book.findUserBookById(transaction.getBookID(), user));
                     lateFee += 10;
 
                 }else if(daysBorrowed > 7){
-                    user.getTimeExpiredBooks().add(Book.findUserBookById(transaction.getBookID()));
+                    user.getTimeExpiredBooks().add(Book.findUserBookById(transaction.getBookID(), user));
                     lateFee += 5;
                 }
             }

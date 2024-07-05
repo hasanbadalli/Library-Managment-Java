@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Book implements IBook {
     private int bookID;
@@ -108,6 +109,18 @@ public class Book implements IBook {
         books.add(new Book("7 Color", "Heseny Bedellyy", BookGenre.SCIENCE, LocalDate.of(2024, 1, 1), false));
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
+        return bookID == book.bookID && isAvailable == book.isAvailable && Objects.equals(title, book.title) && Objects.equals(author, book.author) && genre == book.genre && Objects.equals(publicationDate, book.publicationDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(bookID, title, author, genre, publicationDate, isAvailable);
+    }
 
     public static Book findBookById(int id){
         for(Book book : Book.books){
@@ -118,8 +131,9 @@ public class Book implements IBook {
         return null;
     }
 
-    public static Book findUserBookById(int id){
-        for(Book book : User.getUserBooks()){
+    public static Book findUserBookById(int id, User user){
+
+        for(Book book : user.getUserBooks()){
             if(book.getBookID() == id){
                 return book;
             }
