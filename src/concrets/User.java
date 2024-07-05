@@ -35,6 +35,13 @@ public class User implements IUser {
         return timeExpiredBooks;
     }
 
+    public User(String name, String email, String password, UserRole userRole){
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.userRole = userRole;
+        this.userID = nextID++;
+    }
 
 
     public User(String name, String adress, String phone, String email, String password, UserRole userRole) {
@@ -107,13 +114,7 @@ public class User implements IUser {
         this.userRole = userRole;
     }
 
-    public User(String name, String email, String password, UserRole userRole){
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.userRole = userRole;
-        this.userID = nextID++;
-    }
+
 
     public User(String email){
         this.email = email;

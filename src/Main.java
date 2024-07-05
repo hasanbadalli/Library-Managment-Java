@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -25,6 +26,7 @@ public class Main {
                 ----------------------
                 """);
         boolean run = true;
+
         while (run){
 
             System.out.println("""
@@ -33,7 +35,23 @@ public class Main {
                     2 --> Login
                     0 --> Exit
                     """);
-            int option = scan.nextInt();
+            int option=-1;
+            boolean optionStatus = false;
+
+            while (!optionStatus) {
+                try {
+                    option = scan.nextInt();
+                    if (option >= 0 && option <= 2) {
+                        optionStatus = true;
+                    } else {
+                        System.out.println("Invalid option, please enter 0, 1, or 2.");
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.println("Please write correctly");
+                    scan.next();
+                }
+            }
+
             switch(option){
                 case 1 -> {
                     register();
@@ -46,6 +64,8 @@ public class Main {
                     System.out.println("Exited");
                 }
             }
+
+
         }
 
     }
@@ -83,7 +103,7 @@ public class Main {
 
         }
 
-        System.out.println(User.userMap.toString());
+
 
     }
 
@@ -165,7 +185,23 @@ public class Main {
                     0 --> Exit
                     """);
             borrowedBookChecker(userMember);
-            int option = scan.nextInt();
+            int option=-1;
+            boolean optionStatus = false;
+
+            while (!optionStatus) {
+                try {
+                    option = scan.nextInt();
+                    if (option >= 0 && option <= 11) {
+                        optionStatus = true;
+                    } else {
+                        System.out.println("Invalid option");
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.println("Please write correctly");
+                    scan.next();
+                }
+            }
+
             switch(option){
                 case 1 -> {
                     System.out.println(userMember);
@@ -174,11 +210,22 @@ public class Main {
                     book.seeAllBooks();
                     System.out.println();
                     System.out.println("If you want to add favourite books, write 1, if not write 0");
-                    int newOption = scan.nextInt();
+                    int newOption = 0;
+                    try {
+                        newOption = scan.nextInt();
+                    }catch (InputMismatchException e){
+                        System.out.println("Please Write number");
+                    }
                     if(newOption == 1){
                         System.out.println("Type the ID of the book to add it to your favorite book list (if you re-type the ID of the book you added, it will be deleted from your favorite list).");
                         System.out.println(userMember.getFavouriteBooks());
-                        int newBookId = scan.nextInt();
+
+                        int newBookId = -1;
+                        try{
+                            newBookId = scan.nextInt();
+                        }catch (InputMismatchException e){
+                            System.out.println("Please Write number");
+                        }
                         Book book1 = Book.findBookById(newBookId);
                         if(book1 != null){
                             boolean existed = false;
@@ -201,7 +248,13 @@ public class Main {
                     book.seeAllBooks();
                     System.out.println();
                     System.out.println("Please write book id which you want");
-                    int id = scan.nextInt();
+                    int id = -1;
+                    try{
+                        id = scan.nextInt();
+                    }catch (InputMismatchException e){
+                        System.out.println("Please Write number");
+                    }
+
                     Book book1 = Book.findBookById(id);
                     if(book1 != null){
                         if(book1.isAvailable()){
@@ -221,7 +274,12 @@ public class Main {
                     System.out.println();
                     userMember.seeBorrowedBooks();
                     System.out.println("Please write book id which you want to return");
-                    int id = scan.nextInt();
+                    int id = -1;
+                    try{
+                        id = scan.nextInt();
+                    }catch (InputMismatchException e){
+                        System.out.println("Please Write number");
+                    }
                     Book book1 = new Book();
                     Book book = Book.findUserBookById(id, userMember);
                     if(book != null){
@@ -320,7 +378,22 @@ public class Main {
                     9 --> Delete Account
                     0 --> Exit
                     """);
-            int option = scan.nextInt();
+            int option=-1;
+            boolean optionStatus = false;
+
+            while (!optionStatus) {
+                try {
+                    option = scan.nextInt();
+                    if (option >= 0 && option <= 9) {
+                        optionStatus = true;
+                    } else {
+                        System.out.println("Invalid option");
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.println("Please write correctly");
+                    scan.next();
+                }
+            }
             switch(option){
                 case 1 -> {
                     System.out.println(User.
@@ -332,23 +405,33 @@ public class Main {
                 }
 
                 case 3 -> {
-                    System.out.println("Write Book Title");
-                    String title = scan.next();
-                    System.out.println("Write Author Name");
-                    String author = scan.next();
-                    System.out.println("Write Book Genre");
-                    BookGenre bookGenre = BookGenre.valueOf(scan.next().toUpperCase());
-                    System.out.println("Avialable or no avialable?(Wrire true or false)");
-                    boolean isavialable = scan.nextBoolean();
-                    Book book = new Book(title, author, bookGenre, LocalDate.now(), isavialable);
-                    book.addBook(book);
-                    System.out.println("Book is added successfully");
+                    try{
+                        System.out.println("Write Book Title");
+                        String title = scan.next();
+                        System.out.println("Write Author Name");
+                        String author = scan.next();
+                        System.out.println("Write Book Genre");
+                        BookGenre bookGenre = BookGenre.valueOf(scan.next().toUpperCase());
+                        System.out.println("Avialable or no avialable?(Wrire true or false)");
+                        boolean isavialable = scan.nextBoolean();
+                        Book book = new Book(title, author, bookGenre, LocalDate.now(), isavialable);
+                        book.addBook(book);
+                        System.out.println("Book is added successfully");
+                    }catch (InputMismatchException | IllegalArgumentException e){
+                        System.out.println("Please write correct");
+                    }
+
                 }
                 case 4 -> {
                     Book book = new Book();
                     book.seeAllBooks();
                     System.out.println("Write book id which you want remove");
-                    int id = scan.nextInt();
+                    int id = -1;
+                    try{
+                        id = scan.nextInt();
+                    }catch (InputMismatchException e){
+                        System.out.println("Please Write number");
+                    }
                     Book book1= Book.findBookById(id);
                     if(book1 != null){
                         book.deleteBook(book1);
@@ -362,7 +445,12 @@ public class Main {
                     Book book = new Book();
                     book.seeAllBooks();
                     System.out.println("Write Book id which you want update avialable status");
-                    int id = scan.nextInt();
+                    int id = -1;
+                    try{
+                        id = scan.nextInt();
+                    }catch (InputMismatchException e){
+                        System.out.println("Please Write number");
+                    }
                     Book book1= Book.findBookById(id);
                     if(book1 != null){
                         book1.updateBook(book1);
