@@ -1,6 +1,8 @@
 import concrets.Book;
 import concrets.Transaction;
 import concrets.User;
+import customFuncInterface.FindBookById;
+import customFuncInterface.FindUserBookById;
 import enums.BookGenre;
 import enums.TransactionType;
 import enums.UserRole;
@@ -13,10 +15,12 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Main {
     static Scanner scan = new Scanner(System.in);
+
 
     public static void main(String[] args) {
 
@@ -207,7 +211,7 @@ public class Main {
                     System.out.println(userMember);
                 }case 2 -> {
                     Book book = new Book();
-                    book.seeAllBooks();
+                    Book.seeBooks.seeAllBooks();
                     System.out.println();
                     System.out.println("If you want to add favourite books, write 1, if not write 0");
                     int newOption = 0;
@@ -226,7 +230,7 @@ public class Main {
                         }catch (InputMismatchException e){
                             System.out.println("Please Write number");
                         }
-                        Book book1 = Book.findBookById(newBookId);
+                        Book book1 = Book.findBookById.find(newBookId);
                         if(book1 != null){
                             boolean existed = false;
                             for (Book favouriteBook : userMember.getFavouriteBooks()) {
@@ -245,7 +249,7 @@ public class Main {
                     }
                 }case 3->{
                     Book book = new Book();
-                    book.seeAllBooks();
+                    Book.seeBooks.seeAllBooks();
                     System.out.println();
                     System.out.println("Please write book id which you want");
                     int id = -1;
@@ -255,9 +259,12 @@ public class Main {
                         System.out.println("Please Write number");
                     }
 
-                    Book book1 = Book.findBookById(id);
+                    Book book1 = Book.findBookById.find(id);
                     if(book1 != null){
-                        if(book1.isAvailable()){
+
+
+                        if(Book.isBookAvailable.test(book1)){
+
                             userMember.borrowBook(book1);
                             Transaction transaction = new Transaction(userMember.getUserID(), id, TransactionType.BORROW, LocalDate.now());
                             transaction.record(userMember, transaction);
@@ -281,7 +288,8 @@ public class Main {
                         System.out.println("Please Write number");
                     }
                     Book book1 = new Book();
-                    Book book = Book.findUserBookById(id, userMember);
+
+                    Book book = Book.findUserBookById.find(id, userMember);
                     if(book != null){
                         userMember.returnBook(book);
                         LocalDate borrowDate = Transaction.getBorrowDate(userMember, book.getBookID());
@@ -424,7 +432,7 @@ public class Main {
                 }
                 case 4 -> {
                     Book book = new Book();
-                    book.seeAllBooks();
+                    Book.seeBooks.seeAllBooks();
                     System.out.println("Write book id which you want remove");
                     int id = -1;
                     try{
@@ -432,7 +440,7 @@ public class Main {
                     }catch (InputMismatchException e){
                         System.out.println("Please Write number");
                     }
-                    Book book1= Book.findBookById(id);
+                    Book book1= Book.findBookById.find(id);
                     if(book1 != null){
                         book.deleteBook(book1);
 
@@ -443,7 +451,7 @@ public class Main {
                 }
                 case 5 -> {
                     Book book = new Book();
-                    book.seeAllBooks();
+                    Book.seeBooks.seeAllBooks();
                     System.out.println("Write Book id which you want update avialable status");
                     int id = -1;
                     try{
@@ -451,7 +459,7 @@ public class Main {
                     }catch (InputMismatchException e){
                         System.out.println("Please Write number");
                     }
-                    Book book1= Book.findBookById(id);
+                    Book book1= Book.findBookById.find(id);
                     if(book1 != null){
                         book1.updateBook(book1);
                         System.out.println("Book status is updated successfully");
@@ -459,8 +467,7 @@ public class Main {
                         System.out.println("There is no book for this id");
                     }
                 }case 6 -> {
-                    Book book = new Book();
-                    book.seeAllBooks();
+                    Book.seeBooks.seeAllBooks();
                 }
                 case 8 -> {
                     System.out.println("Write your new password");
@@ -493,11 +500,11 @@ public class Main {
             for (Transaction transaction : transactions) {
                 long daysBorrowed = ChronoUnit.DAYS.between(transaction.getBorrowDate(), LocalDate.now());
                 if (daysBorrowed > 14) {
-                    user.getTimeExpiredBooks().add(Book.findUserBookById(transaction.getBookID(), user));
+                    user.getTimeExpiredBooks().add(Book.findUserBookById.find(transaction.getBookID(), user));
                     lateFee += 10;
 
                 }else if(daysBorrowed > 7){
-                    user.getTimeExpiredBooks().add(Book.findUserBookById(transaction.getBookID(), user));
+                    user.getTimeExpiredBooks().add(Book.findUserBookById.find(transaction.getBookID(), user));
                     lateFee += 5;
                 }
             }

@@ -1,6 +1,9 @@
 package concrets;
 
 import abstracts.IBook;
+import customFuncInterface.FindBookById;
+import customFuncInterface.FindUserBookById;
+import customFuncInterface.SeeBooks;
 import enums.BookGenre;
 
 import java.sql.Time;
@@ -9,8 +12,10 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 public class Book implements IBook {
+
     private int bookID;
     private static int nextID = 1;
     private String title, author;
@@ -19,6 +24,29 @@ public class Book implements IBook {
     private boolean isAvailable;
     public static List<Book> books = new ArrayList<>();
 
+    public static Predicate<Book> isBookAvailable = Book::isAvailable;
+    public static FindBookById findBookById = (bookId)->{
+        for(Book wantedBook : Book.books){
+            if(wantedBook.getBookID() == bookId){
+                return wantedBook;
+            }
+        }
+        return null;
+    };
+    public static FindUserBookById findUserBookById = (userid, user)->{
+        for(Book book : user.getUserBooks()){
+            if(book.getBookID() == userid){
+                return book;
+            }
+        }
+        return null;
+    };
+
+    public static SeeBooks seeBooks = ()->{
+        for (int i = 0; i < books.size(); i++) {
+            System.out.println(books.get(i).toString());
+        }
+    };
 
     public int getBookID() {
         return bookID;
@@ -122,26 +150,6 @@ public class Book implements IBook {
         return Objects.hash(bookID, title, author, genre, publicationDate, isAvailable);
     }
 
-    public static Book findBookById(int id){
-        for(Book book : Book.books){
-            if(book.getBookID() == id){
-                return book;
-            }
-        }
-        return null;
-    }
-
-    public static Book findUserBookById(int id, User user){
-
-        for(Book book : user.getUserBooks()){
-            if(book.getBookID() == id){
-                return book;
-            }
-        }
-        return null;
-    }
-
-
     @Override
     public void addBook(Book book) {
         books.add(book);
@@ -157,10 +165,5 @@ public class Book implements IBook {
         book.setAvailable(!isAvailable);
     }
 
-    @Override
-    public void seeAllBooks() {
-        for (int i = 0; i < books.size(); i++) {
-            System.out.println(books.get(i).toString());
-        }
-    }
+
 }

@@ -6,7 +6,7 @@ public interface IBook {
     void addBook(Book book);
     void deleteBook(Book book);
     void updateBook(Book book);
-    void seeAllBooks();
+
 
 
 }
